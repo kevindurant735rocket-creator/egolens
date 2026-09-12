@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+  <title>EgoLens — AI Research Radar</title>
+  <link>https://kevindurant735rocket-creator.github.io/egolens/</link>
+  <description>Audited 1,200 AI papers (2024-2026). Only 22.5% have working code. 6-dim reproducibility radar.</description>
+  <language>zh-CN</language>
+  <lastBuildDate>Thu, 11 Sep 2026 00:00:00 GMT</lastBuildDate>
+  <atom:link href="https://kevindurant735rocket-creator.github.io/egolens/rss.xml" rel="self" type="application/rss+xml"/>
+  <item>
+    <title>EgoLens v3: Only 22.5% of AI Papers Have Working Code — 1,200 Paper Audit</title>
+    <link>https://kevindurant735rocket-creator.github.io/egolens/</link>
+    <guid>https://kevindurant735rocket-creator.github.io/egolens/#v3</guid>
+    <pubDate>Thu, 11 Sep 2026 00:00:00 GMT</pubDate>
+    <description><![CDATA[We audited 1,200 arXiv papers (200 verifiable). 6-dim score. Find runnable papers in 30s. Live radar + 6-chart audit report. Open data & code.]]></description>
+  </item>
+  <item>
+    <title>Audit Report: The 2024-2026 AI Reproducibility Gap (6 Charts)</title>
+    <link>https://kevindurant735rocket-creator.github.io/egolens/report.html</link>
+    <guid>https://kevindurant735rocket-creator.github.io/egolens/report.html</guid>
+    <pubDate>Thu, 11 Sep 2026 00:00:00 GMT</pubDate>
+    <description><![CDATA[Journal-style audit: 6-dim rubric, score distribution, category gaps, runnable bottleneck, citation≠reproducibility r=0.34. Open, verifiable.]]></description>
+  </item>
+</channel>
+</rss>

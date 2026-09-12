@@ -1,9 +1,10 @@
-// EgoLens Radar — polished (SEC hardened: textContent only, no innerHTML, global error capture)
+// EgoLens Radar — v3 polished (SEC hardened: textContent only, no innerHTML, global error capture + featured + pills + export + shortcuts)
 (function(){
 'use strict';
 const FAV_KEY = 'egolens:favs';
 let papers=[], stats=null;
 let debounceTimer=null;
+let activeTag=null;
 
 // ---- Observability: global error capture ----
 window.addEventListener('error', function(e){
@@ -11,7 +12,6 @@ window.addEventListener('error', function(e){
     var msg = (e && e.message) ? e.message : 'unknown error';
     var toastEl = document.getElementById('toast');
     if(toastEl){ toastEl.textContent = '加载异常，已记录'; toastEl.classList.add('show'); clearTimeout(toastEl._t); toastEl._t = setTimeout(function(){ toastEl.classList.remove('show'); }, 2200); }
-    // silent report hook: window.__egolensErrors
     window.__egolensErrors = window.__egolensErrors || [];
     window.__egolensErrors.push({type:'error', message: msg, time: Date.now()});
   }catch(_){}
@@ -35,7 +35,6 @@ function el(tag, cls, text){ const n=document.createElement(tag); if(cls) n.clas
 function scoreClass(s){ return s>=70 ? 'score-high' : s>=40 ? 'score-mid' : 'score-low'; }
 function badgeForScore(s){ if(s>=70) return ['高','badge-green']; if(s>=40) return ['中','badge-amber']; return ['低','badge-red']; }
 
-// Safe highlight: builds DOM nodes via textContent / mark, never innerHTML
 function appendHighlight(parent, text, query){
   parent.textContent = '';
   if(!query || !text){ parent.textContent = text || ''; return; }
@@ -78,9 +77,12 @@ async function load(){
     await Promise.all([dataPromise, minDelay]);
     initControls();
     renderKpis();
+    renderFeatured();
+    renderTagPills();
     renderCharts();
     hideSkeleton();
     renderList();
+    bindGlobalActions();
   }catch(e){
     hideSkeleton();
     var root=document.getElementById('papers');
@@ -131,15 +133,181 @@ function clearFilters(){
   document.getElementById('scoreVal').textContent='0';
   document.getElementById('onlyCode').checked=false;
   document.getElementById('onlyFav').checked=false;
+  activeTag=null;
+  document.querySelectorAll('.pill.active').forEach(function(p){p.classList.remove('active')});
   renderList();
 }
 
 function renderKpis(){
-  document.getElementById('kpi-total').textContent = stats.total.toLocaleString();
-  document.getElementById('kpi-code').textContent = stats.codeAvailablePct + '%';
+  // animated counting
+  function animate(id, target, suffix){
+    var el=document.getElementById(id);
+    if(!el) return;
+    var start=0;
+    var dur=900;
+    var t0=performance.now();
+    function step(now){
+      var p=Math.min(1,(now-t0)/dur);
+      var eased=1-Math.pow(1-p,3);
+      var v=Math.round(start + (target-start)*eased);
+      el.textContent = suffix ? v+suffix : String(v).toLocaleString ? v.toLocaleString() : v;
+      if(suffix && id==='kpi-code') el.textContent = v + suffix;
+      if(id==='kpi-total') el.textContent = v.toLocaleString();
+      if(p<1) requestAnimationFrame(step);
+      else {
+        if(id==='kpi-total') el.textContent = stats.total.toLocaleString();
+        if(id==='kpi-code') el.textContent = stats.codeAvailablePct + '%';
+        if(id==='kpi-score') el.textContent = String(target);
+        if(id==='kpi-date') el.textContent = (stats.generatedAt||'').slice(0,10);
+      }
+    }
+    requestAnimationFrame(step);
+  }
+  animate('kpi-total', stats.total, '');
+  animate('kpi-code', stats.codeAvailablePct, '%');
   const avg = papers.length ? Math.round(papers.reduce(function(a,b){return a+b.score;},0)/papers.length) : 0;
-  document.getElementById('kpi-score').textContent = avg;
-  document.getElementById('kpi-date').textContent = (stats.generatedAt||'').slice(0,10);
+  animate('kpi-score', avg, '');
+  var dEl=document.getElementById('kpi-date');
+  if(dEl) dEl.textContent = (stats.generatedAt||'').slice(0,10);
+}
+
+function renderFeatured(){
+  var wrap=document.getElementById('featured');
+  if(!wrap) return;
+  wrap.replaceChildren();
+  var top = papers.slice().sort(function(a,b){return b.score-a.score|| b.published.localeCompare(a.published)}).slice(0,3);
+  top.forEach(function(p, idx){
+    var card=el('div','feat-card');
+    card.tabIndex=0;
+    card.setAttribute('role','button');
+    card.setAttribute('aria-label', p.title);
+    var topRow=el('div','feat-top');
+    var rank=el('div','feat-rank', String(idx+1));
+    var title=el('div','feat-title', p.title);
+    topRow.append(rank, title);
+    var meta=el('div','feat-meta');
+    meta.append(el('span','badge', p.category), el('span',null, p.published), el('span',null, (p.tags||[]).join(' · ')));
+    var score=el('div','score '+scoreClass(p.score), String(p.score));
+    score.className='feat-score '+(p.score>=70?'score-high':p.score>=40?'score-mid':'score-low');
+    card.append(topRow, meta, score);
+    card.addEventListener('click', function(){ openDrawer(p, ''); });
+    card.addEventListener('keydown', function(e){ if(e.key==='Enter'||e.key===' ') {e.preventDefault(); openDrawer(p,'');}});
+    wrap.appendChild(card);
+  });
+}
+
+function renderTagPills(){
+  var wrap=document.getElementById('tagPills');
+  if(!wrap || !stats || !stats.topTags) return;
+  wrap.replaceChildren();
+  var counts={};
+  papers.forEach(function(p){(p.tags||[]).forEach(function(t){counts[t]=(counts[t]||0)+1})});
+  var tags = (stats.topTags||[]).slice(0,8);
+  tags.forEach(function(pair){
+    var tag=pair[0], c=counts[tag]||pair[1];
+    var btn=el('button','pill');
+    btn.type='button';
+    btn.textContent= tag;
+    var cnt=el('span','pill-count', String(c));
+    btn.appendChild(cnt);
+    btn.addEventListener('click', function(){
+      if(activeTag===tag){
+        activeTag=null; btn.classList.remove('active');
+      } else {
+        activeTag=tag;
+        document.querySelectorAll('.pill.active').forEach(function(x){x.classList.remove('active')});
+        btn.classList.add('active');
+        document.getElementById('q').value=tag;
+      }
+      renderList();
+    });
+    wrap.appendChild(btn);
+  });
+  var clear=document.getElementById('clearPills');
+  if(clear) clear.addEventListener('click', function(){
+    activeTag=null;
+    document.querySelectorAll('.pill.active').forEach(function(x){x.classList.remove('active')});
+    document.getElementById('q').value='';
+    renderList();
+  });
+}
+
+function bindGlobalActions(){
+  // share
+  var shareBtn=document.getElementById('shareBtn');
+  if(shareBtn){
+    shareBtn.addEventListener('click', async function(){
+      var url=location.href;
+      if(navigator.share){
+        try{ await navigator.share({title: document.title, text: 'EgoLens — Only 22.5% of AI papers have working code', url}); toast('已唤起系统分享'); return; }catch(e){}
+      }
+      try{ await navigator.clipboard.writeText(url); toast('链接已复制，去分享吧！'); }catch(e){ toast('链接: '+url); }
+    });
+  }
+  // exports
+  var csvBtn=document.getElementById('exportCsvBtn');
+  if(csvBtn) csvBtn.addEventListener('click', function(){ exportFiltered('csv'); });
+  var bibBtn=document.getElementById('exportBibBtn');
+  if(bibBtn) bibBtn.addEventListener('click', function(){ exportFiltered('bib'); });
+  var jsonBtn=document.getElementById('exportJsonBtn');
+  if(jsonBtn) jsonBtn.addEventListener('click', function(){ exportFiltered('json'); });
+  // newsletter
+  var subBtn=document.getElementById('subBtn');
+  if(subBtn) subBtn.addEventListener('click', function(){
+    var email=(document.getElementById('subEmail')||{}).value||'';
+    if(!email || email.indexOf('@')===-1){ toast('请输入有效邮箱'); return; }
+    var subject=encodeURIComponent('Subscribe EgoLens updates');
+    var body=encodeURIComponent('Hi EgoLens team, please subscribe '+email+' for monthly top 10 runnable papers.\n\nLink: https://kevindurant735rocket-creator.github.io/egolens/');
+    location.href='mailto:egolens@example.org?subject='+subject+'&body='+body;
+    toast('已打开邮件客户端');
+  });
+  // keyboard: / to search
+  document.addEventListener('keydown', function(e){
+    if(e.key==='/' && !e.metaKey && !e.ctrlKey && !e.altKey){
+      var active=document.activeElement;
+      if(active && (active.tagName==='INPUT' || active.tagName==='TEXTAREA' || active.isContentEditable)) return;
+      e.preventDefault();
+      var q=document.getElementById('q');
+      if(q){ q.focus(); q.select(); }
+    }
+    if(e.key==='Escape' && document.activeElement && document.activeElement.id==='q'){
+      document.activeElement.blur();
+      clearFilters();
+    }
+  });
+  // live hint
+  var hint=document.getElementById('liveHint');
+  if(hint) hint.textContent='· 已加载 '+papers.length+' 篇 · 收藏 '+favs.size+' 篇';
+}
+
+function exportFiltered(fmt){
+  var list=getFiltered().list;
+  if(!list.length){ toast('当前筛选无数据'); return; }
+  var blob, filename, mime;
+  if(fmt==='csv'){
+    var header=['id','title','authors','category','published','score','codeUrl','arxivUrl','tags'].join(',');
+    var rows=list.map(function(p){
+      var esc=function(s){ return '"'+String(s).replace(/"/g,'""')+'"'; };
+      return [p.id, esc(p.title), esc(p.authors.join('; ')), p.category, p.published, p.score, p.codeUrl||'', p.arxivUrl||'', esc((p.tags||[]).join(';'))].join(',');
+    });
+    blob=new Blob([header+'\n'+rows.join('\n')], {type:'text/csv;charset=utf-8'});
+    filename='egolens-filtered-'+Date.now()+'.csv'; mime='text/csv';
+  } else if(fmt==='bib'){
+    var bib=list.map(function(p){
+      var key=p.id.replace('.','');
+      var authors=p.authors.join(' and ');
+      return '@article{'+key+',\n  title={' + p.title + '},\n  author={' + authors + '},\n  journal={arXiv:'+p.category+'},\n  year={'+p.published.slice(0,4)+ '},\n  url={'+p.arxivUrl+'}% score '+p.score+'\n}';
+    }).join('\n\n');
+    blob=new Blob([bib], {type:'text/plain;charset=utf-8'});
+    filename='egolens-'+Date.now()+'.bib';
+  } else {
+    blob=new Blob([JSON.stringify(list,null,2)], {type:'application/json'});
+    filename='egolens-filtered-'+Date.now()+'.json';
+  }
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement('a'); a.href=url; a.download=filename; a.click();
+  setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+  toast('已导出 '+list.length+' 篇 ('+fmt.toUpperCase()+')');
 }
 
 function getFiltered(){
@@ -174,6 +342,8 @@ function renderList(){
   const empty = document.getElementById('empty');
   const noRes = document.getElementById('noResults');
   document.getElementById('resultCount').textContent = list.length + ' papers' + (favs.size ? ' · '+favs.size+' 收藏' : '');
+  var hint=document.getElementById('liveHint');
+  if(hint) hint.textContent='· 筛选 '+list.length+' / '+papers.length+' · 收藏 '+favs.size;
   root.replaceChildren();
   if(papers.length===0){
     empty.style.display='block'; noRes.style.display='none'; return;
@@ -205,6 +375,7 @@ function renderList(){
     (p.tags||[]).forEach(function(t){
       const chip=el('span','chip');
       appendHighlight(chip, t, qRaw);
+      if(activeTag && t===activeTag) {chip.style.background='hsl(222 47% 11%)'; chip.style.color='#fff';}
       tags.appendChild(chip);
     });
     if(p.codeUrl){ const b=el('span','badge badge-green','有代码'); tags.appendChild(b); } else { const b=el('span','badge','无代码'); tags.appendChild(b); }
@@ -225,6 +396,8 @@ function renderList(){
       saveFavs(favs);
       document.getElementById('resultCount').textContent = getFiltered().list.length + ' papers' + (favs.size ? ' · '+favs.size+' 收藏' : '');
       if(document.getElementById('onlyFav').checked) renderList();
+      var hint2=document.getElementById('liveHint');
+      if(hint2) hint2.textContent='· 筛选 '+getFiltered().list.length+' / '+papers.length+' · 收藏 '+favs.size;
     });
     card.appendChild(star);
     card.addEventListener('click', function(){ openDrawer(p, qRaw); });
@@ -249,6 +422,14 @@ function openDrawer(p, qRaw){
     saveFavs(favs); renderList();
   });
   links.appendChild(favBtn);
+  // copy bibtex
+  const bibBtn = el('button','btn btn-ghost'); bibBtn.type='button'; bibBtn.textContent='复制 BibTeX';
+  bibBtn.addEventListener('click', async function(){
+    var key=p.id.replace('.','');
+    var bib='@article{'+key+',\n  title={' + p.title + '},\n  author={' + p.authors.join(' and ') + '},\n  journal={arXiv:'+p.category+'},\n  year={'+p.published.slice(0,4)+'},\n  url={'+p.arxivUrl+'}\n}';
+    try{ await navigator.clipboard.writeText(bib); toast('BibTeX 已复制'); }catch(e){ toast(bib.slice(0,80)); }
+  });
+  links.appendChild(bibBtn);
   const abs = el('p'); abs.style.fontSize='13px'; abs.style.color='var(--muted)'; 
   if(qRaw) appendHighlight(abs, p.abstract, qRaw);
   else abs.textContent=p.abstract;
@@ -268,7 +449,6 @@ function openDrawer(p, qRaw){
   document.getElementById('drawer').classList.add('open');
   document.getElementById('drawer').setAttribute('aria-hidden','false');
   document.body.style.overflow='hidden';
-  // a11y: move focus to close button for keyboard users
   var closeBtn=document.getElementById('drawerClose');
   if(closeBtn) closeBtn.focus();
 }
@@ -279,9 +459,7 @@ function closeDrawer(){
 }
 
 function renderCharts(){
-  // Guard for async Chart.js loading
   if(typeof Chart === 'undefined'){
-    // retry shortly if CDN async not yet loaded
     var tries = window.__chartRetry || 0;
     if(tries < 20){
       window.__chartRetry = tries + 1;
@@ -297,7 +475,7 @@ function renderCharts(){
         data:{ labels: stats.trendMonthly.map(function(x){return x.month;}), datasets:[{ label:'论文量', data: stats.trendMonthly.map(function(x){return x.count;}), borderColor:'hsl(239 84% 67%)', backgroundColor:'hsla(239,84%,67%,.12)', fill:true, tension:.35, pointRadius:2, borderWidth:2 }]},
         options:{ responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{y:{beginAtZero:true, grid:{color:'hsl(240 8% 94%)'}}, x:{grid:{display:false}, ticks:{maxRotation:0, autoSkip:true, maxTicksLimit:6}}} }
       });
-    }catch(e){ /* chart render failure captured by global handler */ }
+    }catch(e){}
   }
   const dCtx = document.getElementById('distChart');
   const dist = stats.scoreDistribution || [40,30,12,13,4,1];
