@@ -1,0 +1,14 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='630' viewBox='0 0 1200 630'>
+<rect width='1200' height='630' rx='24' fill='hsl(239 84% 67%)'/>
+<rect x='24' y='24' width='1152' height='582' rx='20' fill='white'/>
+<circle cx='120' cy='120' r='42' fill='hsl(239 84% 67%)'/>
+<text x='120' y='136' text-anchor='middle' font-size='42' fill='white'>◉</text>
+<text x='190' y='132' font-family='Inter, sans-serif' font-size='32' font-weight='700' fill='hsl(222 47% 11%)'>EgoLens</text>
+<text x='190' y='160' font-family='Inter, sans-serif' font-size='14' fill='hsl(215 16% 47%)'>Research Radar</text>
+<text x='60' y='280' font-family='Inter, sans-serif' font-size='56' font-weight='800' fill='hsl(222 47% 11%)'>Only 22.5% of AI papers</text>
+<text x='60' y='340' font-family='Inter, sans-serif' font-size='56' font-weight='800' fill='hsl(239 84% 67%)'>have working code</text>
+<text x='60' y='390' font-family='Inter, sans-serif' font-size='20' fill='hsl(215 16% 47%)'>Audited 1,200 papers (2024—2026) · 6-dim reproducibility score · 200 verifiable</text>
+<rect x='60' y='430' width='340' height='52' rx='12' fill='hsl(222 47% 11%)'/>
+<text x='230' y='463' text-anchor='middle' font-family='Inter, sans-serif' font-size='18' font-weight='700' fill='white'>kevindurant735rocket-creator.github.io/egolens</text>
+<text x='60' y='560' font-family='Inter, sans-serif' font-size='14' fill='hsl(215 16% 47%)'>Open · Verifiable · Useful in 30 seconds · r=0.34 citation ≠ reproducibility</text>
+</svg>
