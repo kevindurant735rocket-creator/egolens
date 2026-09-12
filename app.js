@@ -33,7 +33,12 @@ let favs = loadFavs();
 
 function el(tag, cls, text){ const n=document.createElement(tag); if(cls) n.className=cls; if(text!==undefined) n.textContent=text; return n; }
 function scoreClass(s){ return s>=70 ? 'score-high' : s>=40 ? 'score-mid' : 'score-low'; }
-function badgeForScore(s){ if(s>=70) return ['高','badge-green']; if(s>=40) return ['中','badge-amber']; return ['低','badge-red']; }
+function badgeForScore(s){
+  const isEn = (typeof window.getLang==='function' && window.getLang()==='en');
+  if(s>=70) return [isEn? (window.t? window.t('badge_high'):'High') : '高','badge-green'];
+  if(s>=40) return [isEn? (window.t? window.t('badge_mid'):'Med') : '中','badge-amber'];
+  return [isEn? (window.t? window.t('badge_low'):'Low') : '低','badge-red'];
+}
 
 function appendHighlight(parent, text, query){
   parent.textContent = '';
@@ -239,9 +244,9 @@ function bindGlobalActions(){
     shareBtn.addEventListener('click', async function(){
       var url=location.href;
       if(navigator.share){
-        try{ await navigator.share({title: document.title, text: 'EgoLens — Only 22.5% of AI papers have working code', url}); toast('已唤起系统分享'); return; }catch(e){}
+        try{ await navigator.share({title: document.title, text: 'EgoLens — Only 22.5% of AI papers have working code', url}); toast(window.t? 'Shared':'已唤起系统分享'); return; }catch(e){}
       }
-      try{ await navigator.clipboard.writeText(url); toast('链接已复制，去分享吧！'); }catch(e){ toast('链接: '+url); }
+      try{ await navigator.clipboard.writeText(url); toast(window.t? window.t('toast_copied'):'链接已复制，去分享吧！'); }catch(e){ toast('链接: '+url); }
     });
   }
   // exports
@@ -255,11 +260,11 @@ function bindGlobalActions(){
   var subBtn=document.getElementById('subBtn');
   if(subBtn) subBtn.addEventListener('click', function(){
     var email=(document.getElementById('subEmail')||{}).value||'';
-    if(!email || email.indexOf('@')===-1){ toast('请输入有效邮箱'); return; }
+    if(!email || email.indexOf('@')===-1){ toast(window.t? window.t('toast_sub_invalid'):'请输入有效邮箱'); return; }
     var subject=encodeURIComponent('Subscribe EgoLens updates');
     var body=encodeURIComponent('Hi EgoLens team, please subscribe '+email+' for monthly top 10 runnable papers.\n\nLink: https://kevindurant735rocket-creator.github.io/egolens/');
     location.href='mailto:egolens@example.org?subject='+subject+'&body='+body;
-    toast('已打开邮件客户端');
+    toast(window.t? window.t('toast_sub_open'):'已打开邮件客户端');
   });
   // keyboard: / to search
   document.addEventListener('keydown', function(e){
@@ -307,7 +312,7 @@ function exportFiltered(fmt){
   var url=URL.createObjectURL(blob);
   var a=document.createElement('a'); a.href=url; a.download=filename; a.click();
   setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
-  toast('已导出 '+list.length+' 篇 ('+fmt.toUpperCase()+')');
+  toast((window.t? window.t('toast_export'):'已导出')+' '+list.length+' ('+fmt.toUpperCase()+')');
 }
 
 function getFiltered(){
@@ -351,8 +356,9 @@ function renderList(){
   if(list.length===0){
     empty.style.display='none'; noRes.style.display='block';
     var msgEl=document.getElementById('noResultsMsg');
-    if(qRaw) msgEl.textContent = '关键词 “'+qRaw+'” 没有匹配结果，试试放宽筛选或更换关键词。';
-    else msgEl.textContent = '当前筛选条件下没有匹配的论文。';
+    const isEn = window.getLang && window.getLang()==='en';
+    if(qRaw) msgEl.textContent = isEn ? 'No match for “'+qRaw+'” — try broader filters.' : '关键词 “'+qRaw+'” 没有匹配结果，试试放宽筛选或更换关键词。';
+    else msgEl.textContent = isEn ? 'No papers match current filters.' : '当前筛选条件下没有匹配的论文。';
     return;
   }
   empty.style.display='none'; noRes.style.display='none';
@@ -378,9 +384,9 @@ function renderList(){
       if(activeTag && t===activeTag) {chip.style.background='hsl(222 47% 11%)'; chip.style.color='#fff';}
       tags.appendChild(chip);
     });
-    if(p.codeUrl){ const b=el('span','badge badge-green','有代码'); tags.appendChild(b); } else { const b=el('span','badge','无代码'); tags.appendChild(b); }
+    if(p.codeUrl){ const b=el('span','badge badge-green', (window.t? window.t('badge_code'):'有代码') ); tags.appendChild(b); } else { const b=el('span','badge', (window.t? window.t('badge_nocode'):'无代码') ); tags.appendChild(b); }
     const badgeParts = badgeForScore(p.score);
-    const sBadge = el('span','badge '+badgeParts[1], '复现 '+badgeParts[0]);
+    const sBadge = el('span','badge '+badgeParts[1],  ((window.t? window.t('badge_high'):'复现')+' ') +badgeParts[0]);
     tags.appendChild(sBadge);
     main.append(h3, meta, tags);
     row.append(score, main);
@@ -391,8 +397,8 @@ function renderList(){
     star.textContent = favs.has(p.id) ? '★' : '☆';
     star.addEventListener('click', function(e){
       e.stopPropagation();
-      if(favs.has(p.id)){ favs.delete(p.id); star.classList.remove('active'); star.textContent='☆'; star.setAttribute('aria-label','收藏'); toast('已取消收藏'); }
-      else { favs.add(p.id); star.classList.add('active'); star.textContent='★'; star.setAttribute('aria-label','取消收藏'); toast('已收藏'); }
+      if(favs.has(p.id)){ favs.delete(p.id); star.classList.remove('active'); star.textContent='☆'; star.setAttribute('aria-label','收藏'); toast(window.t? window.t('toast_unfav'):'已取消收藏'); }
+      else { favs.add(p.id); star.classList.add('active'); star.textContent='★'; star.setAttribute('aria-label','取消收藏'); toast(window.t? window.t('toast_fav'):'已收藏'); }
       saveFavs(favs);
       document.getElementById('resultCount').textContent = getFiltered().list.length + ' papers' + (favs.size ? ' · '+favs.size+' 收藏' : '');
       if(document.getElementById('onlyFav').checked) renderList();
@@ -418,7 +424,7 @@ function openDrawer(p, qRaw){
   if(p.codeUrl){ const a2=el('a','btn btn-ghost'); a2.href=p.codeUrl; a2.target='_blank'; a2.rel='noreferrer'; a2.textContent='Code ↗'; links.appendChild(a2); }
   const favBtn = el('button', favs.has(p.id)?'btn btn-ghost active':'btn btn-ghost'); favBtn.setAttribute('type','button'); favBtn.textContent = favs.has(p.id)? '★ 已收藏' : '☆ 收藏';
   favBtn.addEventListener('click', function(){
-    if(favs.has(p.id)){ favs.delete(p.id); favBtn.textContent='☆ 收藏'; toast('已取消收藏'); } else { favs.add(p.id); favBtn.textContent='★ 已收藏'; toast('已收藏'); }
+    if(favs.has(p.id)){ favs.delete(p.id); favBtn.textContent= isEnDrawer ? '☆ Favorite' : '☆ 收藏'; toast(window.t? window.t('toast_unfav'):'已取消收藏'); } else { favs.add(p.id); favBtn.textContent= isEnDrawer ? '★ Favorited' : '★ 已收藏'; toast(window.t? window.t('toast_fav'):'已收藏'); }
     saveFavs(favs); renderList();
   });
   links.appendChild(favBtn);
@@ -427,13 +433,14 @@ function openDrawer(p, qRaw){
   bibBtn.addEventListener('click', async function(){
     var key=p.id.replace('.','');
     var bib='@article{'+key+',\n  title={' + p.title + '},\n  author={' + p.authors.join(' and ') + '},\n  journal={arXiv:'+p.category+'},\n  year={'+p.published.slice(0,4)+'},\n  url={'+p.arxivUrl+'}\n}';
-    try{ await navigator.clipboard.writeText(bib); toast('BibTeX 已复制'); }catch(e){ toast(bib.slice(0,80)); }
+    try{ await navigator.clipboard.writeText(bib); toast(window.t? 'BibTeX copied':'BibTeX 已复制'); }catch(e){ toast(bib.slice(0,80)); }
   });
   links.appendChild(bibBtn);
   const abs = el('p'); abs.style.fontSize='13px'; abs.style.color='var(--muted)'; 
   if(qRaw) appendHighlight(abs, p.abstract, qRaw);
   else abs.textContent=p.abstract;
-  const dimsTitle = el('div',null,'6维复现评分'); dimsTitle.style.fontWeight='700'; dimsTitle.style.marginTop='12px'; dimsTitle.style.fontSize='13px';
+  const isEnDrawer = window.getLang && window.getLang()==='en';
+  const dimsTitle = el('div',null, isEnDrawer ? '6-dim Score' : '6维复现评分'); dimsTitle.style.fontWeight='700'; dimsTitle.style.marginTop='12px'; dimsTitle.style.fontSize='13px';
   const grid = el('div','dims');
   const dims = p.dimensions || {};
   [['code','代码 30'],['data','数据 20'],['env','环境 10'],['exp','实验 8'],['doc','文档 10'],['runnable','可跑 22']].forEach(function(pair){
@@ -443,8 +450,8 @@ function openDrawer(p, qRaw){
     if(v>0) d.style.borderColor='#a7f3d0'; grid.appendChild(d);
   });
   const total = el('div'); total.style.marginTop='8px'; total.style.fontSize='13px';
-  const b = el('b',null,'总分 '+p.score+' / 100 — '); const parts=badgeForScore(p.score); const s=el('span','badge '+parts[1], parts[0]); total.append(b,s);
-  const note = el('p'); note.style.fontSize='12px'; note.style.color='var(--muted)'; note.textContent='评分规则：code 30 + data 20 + env 10 + exp 8 + doc 10 + runnable 22，启发式可复跑，详见报告页方法。';
+  const b = el('b',null, (isEnDrawer ? 'Score ' : '总分 ')+p.score+' / 100 — '); const parts=badgeForScore(p.score); const sEl=el('span','badge '+parts[1], parts[0]); total.append(b,sEl);
+  const note = el('p'); note.style.fontSize='12px'; note.style.color='var(--muted)'; note.textContent= isEnDrawer ? 'Rubric: code 30 + data 20 + env 10 + exp 8 + doc 10 + runnable 22. Heuristic, reproducible.' : '评分规则：code 30 + data 20 + env 10 + exp 8 + doc 10 + runnable 22，启发式可复跑，详见报告页方法。';
   body.append(h, meta, links, abs, dimsTitle, grid, total, note);
   document.getElementById('drawer').classList.add('open');
   document.getElementById('drawer').setAttribute('aria-hidden','false');
@@ -501,5 +508,7 @@ function renderCharts(){
   }
 }
 
+  // re-render on lang switch
+  window.addEventListener('egolens:lang', function(){ try{ renderFeatured(); renderList(); if(window.applyI18n) window.applyI18n(); }catch(e){} });
 load();
 })();

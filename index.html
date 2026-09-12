@@ -17,6 +17,9 @@
 <meta name="twitter:description" content="1,200 papers audited. 22.5% have code. r=0.34 citation≠reproducibility. Open, verifiable, useful.">
 <meta name="twitter:image" content="https://kevindurant735rocket-creator.github.io/egolens/og.png">
 <link rel="canonical" href="https://kevindurant735rocket-creator.github.io/egolens/">
+<link rel="alternate" hreflang="zh-CN" href="https://kevindurant735rocket-creator.github.io/egolens/">
+<link rel="alternate" hreflang="en" href="https://kevindurant735rocket-creator.github.io/egolens/?lang=en">
+<meta name="google" content="notranslate">
 <link rel="alternate" type="application/rss+xml" title="EgoLens RSS" href="rss.xml">
 <link rel="sitemap" type="application/xml" title="Sitemap" href="sitemap.xml">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"Dataset","name":"EgoLens AI Reproducibility Audit","description":"1,200 arXiv papers 2024-2026, 6-dim reproducibility scoring","url":"https://kevindurant735rocket-creator.github.io/egolens/","creator":{"@type":"Organization","name":"EgoLens"},"keywords":["reproducibility","arXiv","LLM"],"distribution":[{"@type":"DataDownload","encodingFormat":"JSON","contentUrl":"https://kevindurant735rocket-creator.github.io/egolens/data/papers.json"}]}</script>
@@ -26,6 +29,7 @@
 <link rel="stylesheet" href="style.css">
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <script async src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js" crossorigin="anonymous"></script>
+<style>@media(max-width:640px){#mobileLangToggle{display:inline-flex !important} #langToggle{display:none !important}}</style>
 </head>
 <body>
 <a href="#main" class="skip-link" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden">跳至主内容</a>
@@ -33,10 +37,11 @@
   <div class="container topbar-inner">
     <div class="logo"><div class="logo-mark">◉</div> EgoLens <span style="font-weight:400;color:var(--muted)">Research Radar</span></div>
     <nav class="nav" aria-label="Primary">
-      <a class="active" href="index.html">Radar</a>
-      <a href="report.html">Audit Report</a>
+      <a class="active" href="index.html" data-i18n="nav_radar">Radar</a>
+      <a href="report.html" data-i18n="nav_report">Audit Report</a>
       <a href="https://arxiv.org" target="_blank" rel="noreferrer">arXiv ↗</a>
       <a href="rss.xml" target="_blank" rel="noreferrer" title="RSS">RSS</a>
+      <button id="langToggle" class="btn btn-ghost" style="height:32px;padding:0 12px;font-size:12px;border-radius:999px" aria-label="Switch language">中文 / EN</button>
     </nav>
   </div>
 </header>
@@ -55,15 +60,15 @@
 </div>
 
 <main id="main" class="container" tabindex="-1">
-  <section class="hero">
-    <div style="display:inline-flex;align-items:center;gap:8px;background:hsl(239 100% 97%);border:1px solid hsl(239 92% 92%);color:hsl(239 68% 42%);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;border-radius:999px;margin-bottom:12px"><span style="width:8px;height:8px;background:hsl(142 76% 36%);border-radius:999px;display:inline-block;animation:pulse 1.6s infinite"></span> Live · 200 Papers Verifiable · Updated 2026-09-11 · <span style="font-weight:800">Share →</span> <a href="https://news.ycombinator.com/submitlink?u=https://kevindurant735rocket-creator.github.io/egolens/&t=EgoLens%20—%20Only%2022.5%25%20of%20AI%20Papers%20Have%20Working%20Code" target="_blank" rel="noreferrer" style="color:inherit;text-decoration:underline">HN</a> · <a href="https://www.reddit.com/r/MachineLearning/submit?url=https://kevindurant735rocket-creator.github.io/egolens/&title=EgoLens%20—%20Audited%201200%20AI%20Papers" target="_blank" rel="noreferrer" style="color:inherit;text-decoration:underline">Reddit</a> · <a href="https://twitter.com/intent/tweet?text=EgoLens%20—%20Audited%201200%20AI%20papers%2C%20only%2022.5%25%20have%20code%20%E2%80%94%20find%20runnable%20papers%20in%2030s&url=https://kevindurant735rocket-creator.github.io/egolens/" target="_blank" rel="noreferrer" style="color:inherit;text-decoration:underline">X</a></div>
-    <h1>仅 <span style="background:linear-gradient(135deg,hsl(239 84% 67%),hsl(189 94% 43%));-webkit-background-clip:text;-webkit-text-fill-color:transparent">22.5%</span> 的AI论文有可用代码</h1>
+  <section class="hero" data-i18n-section="hero">
+    <div style="display:inline-flex;align-items:center;gap:8px;background:hsl(239 100% 97%);border:1px solid hsl(239 92% 92%);color:hsl(239 68% 42%);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;border-radius:999px;margin-bottom:12px"><span style="width:8px;height:8px;background:hsl(142 76% 36%);border-radius:999px;display:inline-block;animation:pulse 1.6s infinite"></span> Live · 200 Papers Verifiable · Updated 2026-09-11 · <span style="font-weight:800">Share →</span> <span data-i18n="public_note" style="margin-left:8px;font-weight:400;letter-spacing:0;text-transform:none;font-size:11px;color:var(--muted)">任何人可打开 · 无需登录 · 永久公网</span> <a href="https://news.ycombinator.com/submitlink?u=https://kevindurant735rocket-creator.github.io/egolens/&t=EgoLens%20—%20Only%2022.5%25%20of%20AI%20Papers%20Have%20Working%20Code" target="_blank" rel="noreferrer" style="color:inherit;text-decoration:underline">HN</a> · <a href="https://www.reddit.com/r/MachineLearning/submit?url=https://kevindurant735rocket-creator.github.io/egolens/&title=EgoLens%20—%20Audited%201200%20AI%20Papers" target="_blank" rel="noreferrer" style="color:inherit;text-decoration:underline">Reddit</a> · <a href="https://twitter.com/intent/tweet?text=EgoLens%20—%20Audited%201200%20AI%20papers%2C%20only%2022.5%25%20have%20code%20%E2%80%94%20find%20runnable%20papers%20in%2030s&url=https://kevindurant735rocket-creator.github.io/egolens/" target="_blank" rel="noreferrer" style="color:inherit;text-decoration:underline">X</a></div>
+    <h1 data-i18n-hero><span data-i18n="hero_title_before">仅</span> <span style="background:linear-gradient(135deg,hsl(239 84% 67%),hsl(189 94% 43%));-webkit-background-clip:text;-webkit-text-fill-color:transparent">22.5%</span> 的AI论文有可用代码</h1>
     <p>我们审计了 <b>1,200</b> 篇 2024—2026 arXiv 论文（现场可验 <b>200</b> 篇，真arXiv ID可追溯）。6维可复现评分（代码30/数据20/环境10/实验8/文档10/可跑22），发现<b>引用≠可复现 r=0.34</b>。30秒筛出值得跟进的论文 — <span style="color:hsl(239 84% 58%);font-weight:600">对研究者/审稿人/学生真实有用，开源可复跑。</span></p>
     <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px">
-      <a class="btn" href="#papers" style="padding:10px 18px;font-size:14px">立即筛选论文 →</a>
-      <a class="btn btn-ghost" href="report.html" style="padding:10px 18px;font-size:14px">查看完整报告（6图）</a>
-      <button class="btn btn-ghost" style="padding:10px 18px;font-size:14px" id="shareBtn">复制分享链接</button>
-      <button class="btn btn-ghost" style="padding:10px 18px;font-size:14px" id="exportCsvBtn" title="导出当前筛选结果为 CSV">导出 CSV</button>
+      <a class="btn" href="#papers" style="padding:10px 18px;font-size:14px" data-i18n="btn_filter">立即筛选论文 →</a>
+      <a class="btn btn-ghost" href="report.html" style="padding:10px 18px;font-size:14px" data-i18n="btn_report">查看完整报告（6图）</a>
+      <button class="btn btn-ghost" style="padding:10px 18px;font-size:14px" id="shareBtn" data-i18n="btn_copy">复制分享链接</button>
+      <button class="btn btn-ghost" style="padding:10px 18px;font-size:14px" id="exportCsvBtn" title="导出当前筛选结果为 CSV" data-i18n="btn_export_csv">导出 CSV</button>
     </div>
     <div class="kpis" id="kpis">
       <div class="kpi"><b id="kpi-total">—</b><span>审计论文 / 5 类别</span></div>
@@ -77,33 +82,33 @@
 
   <!-- Featured: Top 3 runnable -->
   <section class="featured-wrap" aria-label="Editor's picks">
-    <div class="featured-head"><b>⭐ 编辑精选 · 最值得复现的 3 篇</b> <span class="badge">分数 100 / 可跑通 · 点击看详情</span></div>
+    <div class="featured-head"><b data-i18n="featured_head">⭐ 编辑精选 · 最值得复现的 3 篇</b> <span class="badge" data-i18n="featured_badge">分数 100 / 可跑通 · 点击看详情</span></div>
     <div id="featured" class="featured-grid"></div>
   </section>
 
   <!-- Tag pills quick filter -->
   <section class="tag-pills-wrap" aria-label="Quick topic filter">
     <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-      <span style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)">快速主题：</span>
+      <span style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)" data-i18n="pills_label">快速主题：</span>
       <div id="tagPills" class="tag-pills"></div>
-      <button id="clearPills" class="btn btn-ghost btn-sm" style="margin-left:auto" type="button">清除主题</button>
+      <button id="clearPills" class="btn btn-ghost btn-sm" style="margin-left:auto" type="button" data-i18n="pills_clear">清除主题</button>
     </div>
   </section>
 
   <div class="main-grid">
     <div>
       <div class="card">
-        <div class="card-head">近30天论文量 · 趋势 <span class="badge">sample 200 + extrapolated 1,200</span></div>
+        <div class="card-head" data-i18n="card_trend">近30天论文量 · 趋势 <span class="badge">sample 200 + extrapolated 1,200</span></div>
         <div class="card-pad"><div class="chart-wrap"><canvas id="trendChart" aria-label="trend"></canvas></div></div>
       </div>
 
       <div class="card" style="margin-top:16px">
         <div class="card-head">
-          <span>论文雷达</span>
+          <span data-i18n="card_radar">论文雷达</span>
           <span style="display:flex;gap:8px;align-items:center">
             <span id="resultCount" class="badge">—</span>
-            <button id="exportBibBtn" class="btn btn-ghost btn-sm" type="button" title="导出当前筛选为 BibTeX">BibTeX</button>
-            <button id="exportJsonBtn" class="btn btn-ghost btn-sm" type="button" title="导出 JSON">JSON</button>
+            <button id="exportBibBtn" class="btn btn-ghost btn-sm" type="button" title="导出当前筛选为 BibTeX" data-i18n="btn_bib">BibTeX</button>
+            <button id="exportJsonBtn" class="btn btn-ghost btn-sm" type="button" title="导出 JSON" data-i18n="btn_json">JSON</button>
           </span>
         </div>
         <div class="controls">
@@ -122,7 +127,7 @@
           <label for="scoreMin" style="font-size:var(--fs-sm);display:flex;align-items:center;gap:6px;white-space:nowrap">复现分 ≥ <input id="scoreMin" class="range" type="range" min="0" max="100" value="0" style="width:110px" aria-label="最低复现分数"><b id="scoreVal" aria-live="polite">0</b></label>
           <label style="font-size:var(--fs-sm);display:flex;align-items:center;gap:6px;cursor:pointer"><input id="onlyCode" type="checkbox" aria-label="仅显示有代码的论文"> 仅有代码</label>
           <label style="font-size:var(--fs-sm);display:flex;align-items:center;gap:6px;cursor:pointer"><input id="onlyFav" type="checkbox" aria-label="仅显示收藏的论文"> 仅收藏</label>
-          <button id="clearBtn" class="btn btn-ghost btn-sm" type="button">清除</button>
+          <button id="clearBtn" class="btn btn-ghost btn-sm" type="button" data-i18n="btn_clear_filters">清除</button>
         </div>
 
         <!-- loading skeleton -->
@@ -139,7 +144,7 @@
           <div class="empty-illust" aria-hidden="true">
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 12h8M12 8v8"/><circle cx="12" cy="12" r="8" stroke-dasharray="4 4" opacity=".3"/></svg>
           </div>
-          <b>还没有论文数据</b>
+          <b data-i18n="empty_title">还没有论文数据</b>
           <p>运行 <code>python3 tools/fetch_arxiv.py</code> 拉取，或检查 data/papers.json</p>
           <div style="margin-top:16px;display:flex;gap:8px;justify-content:center"><a class="btn" href="report.html">查看审计报告</a><button class="btn btn-ghost" onclick="location.reload()">重新加载</button></div>
         </div>
@@ -149,23 +154,23 @@
           <div class="empty-illust" aria-hidden="true">
             <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="11" cy="11" r="7"/><path d="M15.5 15.5L20 20"/><path d="M8 11h6"/></svg>
           </div>
-          <b>没有找到匹配的论文</b>
-          <p id="noResultsMsg">试试放宽筛选或更换关键词</p>
+          <b data-i18n="noresult_title">没有找到匹配的论文</b>
+          <p id="noResultsMsg" data-i18n="noresult_p">试试放宽筛选或更换关键词</p>
           <div style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
-            <button id="resetSearch" class="btn" type="button">清除筛选</button>
-            <button id="showAllBtn" class="btn btn-ghost" type="button">查看全部</button>
+            <button id="resetSearch" class="btn" type="button" data-i18n="noresult_clear">清除筛选</button>
+            <button id="showAllBtn" class="btn btn-ghost" type="button" data-i18n="noresult_all">查看全部</button>
           </div>
         </div>
       </div>
 
       <!-- Impact section -->
       <div class="card" style="margin-top:16px;background:linear-gradient(135deg,hsl(239 100% 98%),hsl(189 100% 98%));border-color:hsl(239 92% 90%)">
-        <div class="card-head" style="background:transparent">为什么这项研究对社会有用？</div>
+        <div class="card-head" style="background:transparent" data-i18n="impact_head">为什么这项研究对社会有用？</div>
         <div class="card-pad" style="display:grid;gap:12px">
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px" class="impact-grid">
-            <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px"><div style="font-size:18px">🎓</div><b style="font-size:13px;display:block;margin-top:6px">帮学生避坑</b><p style="font-size:12px;color:var(--muted);margin:4px 0 0;line-height:1.6">30秒筛出可复现论文，不再浪费 2 周复现“无码论文”。</p></div>
-            <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px"><div style="font-size:18px">🧑‍⚖️</div><b style="font-size:13px;display:block;margin-top:6px">帮审稿人把关</b><p style="font-size:12px;color:var(--muted);margin:4px 0 0;line-height:1.6">6维清单一键核验，引用≠可复现 r=0.34 提醒独立评估。</p></div>
-            <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px"><div style="font-size:18px">🏗️</div><b style="font-size:13px;display:block;margin-top:6px">帮工程师选型</b><p style="font-size:12px;color:var(--muted);margin:4px 0 0;line-height:1.6">只看“可跑通”的论文，技术落地成功率提升 3×。</p></div>
+            <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px"><div style="font-size:18px">🎓</div><b style="font-size:13px;display:block;margin-top:6px" data-i18n="impact_1_t">帮学生避坑</b><p style="font-size:12px;color:var(--muted);margin:4px 0 0;line-height:1.6"><span data-i18n="impact_1_p">30秒筛出可复现论文，不再浪费 2 周复现“无码论文”。</span></p></div>
+            <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px"><div style="font-size:18px">🧑‍⚖️</div><b style="font-size:13px;display:block;margin-top:6px" data-i18n="impact_2_t">帮审稿人把关</b><p style="font-size:12px;color:var(--muted);margin:4px 0 0;line-height:1.6"><span data-i18n="impact_2_p">6维清单一键核验，引用≠可复现 r=0.34 提醒独立评估。</span></p></div>
+            <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:14px"><div style="font-size:18px">🏗️</div><b style="font-size:13px;display:block;margin-top:6px" data-i18n="impact_3_t">帮工程师选型</b><p style="font-size:12px;color:var(--muted);margin:4px 0 0;line-height:1.6"><span data-i18n="impact_3_p">只看“可跑通”的论文，技术落地成功率提升 3×。</span></p></div>
           </div>
           <div style="font-size:12px;color:var(--muted);border-top:1px dashed var(--border);padding-top:10px">数据与代码 <b style="color:var(--text)">开源可复跑</b> · 方法见 <a href="report.html">审计报告</a> · 欢迎提交 PR 纠正评分 · <a href="data/papers.json" target="_blank">原始数据 JSON</a></div>
         </div>
@@ -174,15 +179,15 @@
 
     <div>
       <div class="card">
-        <div class="card-head">可复现性分布</div>
+        <div class="card-head" data-i18n="dist_head">可复现性分布</div>
         <div class="card-pad"><div class="chart-wrap"><canvas id="distChart"></canvas></div><p style="font-size:var(--fs-xs);color:var(--muted);margin:12px 0 0">仅 <b style="color:var(--text)">22.5%</b> 提供代码，可跑通的更少（≈12%）。引用与复现相关性 <b style="color:var(--text)">r=0.34</b>，高被引≠高可复现。</p></div>
       </div>
       <div class="card" style="margin-top:16px">
-        <div class="card-head">类别热度</div>
+        <div class="card-head" data-i18n="cat_head">类别热度</div>
         <div class="card-pad"><div class="chart-wrap"><canvas id="catChart"></canvas></div></div>
       </div>
       <div class="card" style="margin-top:16px">
-        <div class="card-head">快速开始</div>
+        <div class="card-head" data-i18n="quick_start">快速开始</div>
         <div class="card-pad" style="font-size:var(--fs-sm);color:var(--muted);display:grid;gap:8px">
           <div><b style="color:var(--text)">1. 一键跑：</b> <code>python3 -m http.server 8000 --directory outputs/egolens</code></div>
           <div><b style="color:var(--text)">2. 增量拉取：</b> <code>python3 tools/fetch_arxiv.py --max 30</code></div>
@@ -194,7 +199,7 @@
       <!-- newsletter -->
       <div class="card" style="margin-top:16px;background:hsl(222 47% 11%);color:#fff;border-color:hsl(222 47% 11%)">
         <div class="card-pad" style="display:grid;gap:10px">
-          <b style="font-size:14px;letter-spacing:-.01em">订阅更新 · 新论文自动提醒</b>
+          <b style="font-size:14px;letter-spacing:-.01em" data-i18n="sub_title">订阅更新 · 新论文自动提醒</b>
           <p style="font-size:12px;color:hsl(215 12% 72%);margin:0;line-height:1.6">每月审计增量更新，邮件接收“可复现高分论文”Top 10。零垃圾，仅技术。</p>
           <div style="display:flex;gap:8px">
             <input id="subEmail" placeholder="your@email.com" aria-label="邮箱" style="flex:1;height:32px;border-radius:8px;border:1px solid hsl(222 20% 24%);background:hsl(222 30% 16%);color:#fff;padding:0 12px;font-size:13px;outline:none">
@@ -211,7 +216,7 @@
   <div class="drawer-bg" id="drawerBg"></div>
   <div class="drawer-panel" role="dialog" aria-modal="true" aria-label="论文详情">
     <div class="drawer-head">
-      <b>论文详情</b><button id="drawerClose" class="select" aria-label="关闭" style="width:32px;height:32px;padding:0;display:grid;place-items:center;border-radius:8px">✕</button>
+      <b data-i18n="drawer_title">论文详情</b><button id="drawerClose" class="select" aria-label="关闭" style="width:32px;height:32px;padding:0;display:grid;place-items:center;border-radius:8px">✕</button>
     </div>
     <div style="padding:16px" id="drawerBody"></div>
   </div>
@@ -228,7 +233,7 @@
 <section class="container" style="margin:24px auto">
   <div class="card" style="background:linear-gradient(135deg,hsl(239 100% 97%),hsl(189 100% 97%));border-color:hsl(239 92% 90%)">
     <div class="card-pad" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px">
-      <div><b style="font-size:15px">觉得有用？帮更多人看见这项研究</b><div style="font-size:13px;color:var(--muted);margin-top:4px">一键分享到社区，或 Star 支持开源 — 你的流量让可复现性危机被看见。</div></div>
+      <div><b style="font-size:15px" data-i18n="share_title">觉得有用？帮更多人看见这项研究</b><div style="font-size:13px;color:var(--muted);margin-top:4px" data-i18n="share_p">一键分享到社区，或 Star 支持开源 — 你的流量让可复现性危机被看见。</div></div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <a class="btn" href="https://news.ycombinator.com/submitlink?u=https://kevindurant735rocket-creator.github.io/egolens/&t=EgoLens%20—%20Only%2022.5%25%20of%20AI%20Papers%20Have%20Working%20Code" target="_blank" rel="noreferrer">Share on HN</a>
         <a class="btn btn-ghost" href="https://www.reddit.com/r/MachineLearning/submit?url=https://kevindurant735rocket-creator.github.io/egolens/" target="_blank" rel="noreferrer">Reddit r/ML</a>
@@ -239,10 +244,11 @@
   </div>
 </section>
 
-<footer class="footer"><div class="container">© 2026 EgoLens · 数据来自 arXiv API · 评分规则开源可复现 · <a href="report.html">方法与局限 →</a> · <a href="https://github.com/kevindurant735rocket-creator/egolens" target="_blank" rel="noreferrer">GitHub 开源 →</a> · <a href="sitemap.xml">Sitemap</a> · <a href="rss.xml">RSS</a> · 对社会真实有用：帮学生/审稿人/工程师 30秒避坑</div></footer>
+<footer class="footer"><div class="container" data-i18n="footer">© 2026 EgoLens · 数据来自 arXiv API · 评分规则开源可复现 · <a href="report.html">方法与局限 →</a> · <a href="https://github.com/kevindurant735rocket-creator/egolens" target="_blank" rel="noreferrer">GitHub 开源 →</a> · <a href="sitemap.xml">Sitemap</a> · <a href="rss.xml">RSS</a> · 对社会真实有用：帮学生/审稿人/工程师 30秒避坑</div></footer>
 <style>@keyframes pulse{0%{opacity:1}50%{opacity:.45}100%{opacity:1}}</style>
 <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true"></div>
 <div id="a11y-live" class="sr-only" aria-live="polite" aria-atomic="true" style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden"></div>
+<script src="i18n.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
