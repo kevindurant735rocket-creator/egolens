@@ -175,7 +175,7 @@ const I18N = {
     lang_name: "English",
     public_note: "Open to everyone · No login required · Permanent public URL"
   }
-}
+};
 
 // --- i18n runtime ---
 (function(){
