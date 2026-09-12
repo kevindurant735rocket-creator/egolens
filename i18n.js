@@ -1,4 +1,5 @@
-const I18N = {
+window.I18N = window.I18N || {
+
   zh: {
     htmlLang: "zh-CN",
     title: "EgoLens — AI Research Radar · 200篇论文已审计，仅22.5%有代码",
@@ -198,8 +199,8 @@ const I18N = {
 
   window.I18N_CUR = cur;
   window.t = function(key){
-    const d = I18N[cur] || I18N.zh;
-    return d[key] !== undefined ? d[key] : (I18N.zh[key] || key);
+    const d = window.I18N[cur] || window.I18N.zh;
+    return d[key] !== undefined ? d[key] : (window.I18N.zh[key] || key);
   };
   window.getLang = ()=> cur;
   window.setLang = function(lang){
@@ -219,7 +220,7 @@ const I18N = {
   };
 
   function apply(){
-    const d = I18N[cur] || I18N.zh;
+    const d = window.I18N[cur] || window.I18N.zh;
     // html lang
     document.documentElement.lang = d.htmlLang || (cur==='en'?'en':'zh-CN');
     // title + meta desc
