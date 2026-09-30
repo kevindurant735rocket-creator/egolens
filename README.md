@@ -1,5 +1,8 @@
 # EgoLens
 
+**Live site: <https://kevindurant735rocket-creator.github.io/egolens/>**
+
+
 **An open radar for researchers triaging which AI papers are worth reproducing.**
 
 A static, dependency-free web app that scores 2024–2026 arXiv papers on a 6-dimension
